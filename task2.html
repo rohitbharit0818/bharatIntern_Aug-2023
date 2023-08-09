@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Manager Pro</title>
+    <link rel="stylesheet" href="task2.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Task Manager Pro</h1>
+        <form id="taskForm" aria-label="Task Form">
+            <div>
+                <label for="title">Task Title:</label>
+                <input type="text" id="title" name="title" required>
+            </div>
+
+            <div>
+                <label for="description">Description:</label>
+                <textarea id="description" name="description" required></textarea>
+            </div>
+
+            <div>
+                <label for="reward">Reward:</label>
+                <input type="text" id="reward" name="reward" required>
+            </div>
+
+            <div>
+                <label for="deadline">Deadline:</label>
+                <input type="date" id="deadline" name="deadline" required>
+            </div>
+
+            <button type="submit">Post Task</button>
+        </form>
+
+        <div id="taskList" role="list" aria-label="Task List">
+            <!-- Tasks will be dynamically displayed here -->
+        </div>
+    </div>
+
+    <script src="task2.js"></script>
+</body>
+</html>
