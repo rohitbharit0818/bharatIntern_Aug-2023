@@ -1,81 +1,68 @@
-const localVideo = document.getElementById('localVideo');
-const remoteVideo = document.getElementById('remoteVideo');
-const toggleAudioBtn = document.getElementById('toggleAudioBtn');
-const toggleVideoBtn = document.getElementById('toggleVideoBtn');
-const toggleScreenShareBtn = document.getElementById('toggleScreenShareBtn');
-const toggleFullScreenBtn = document.getElementById('toggleFullScreenBtn');
+const startButton = document.getElementById('start-button');
+const toggleCameraButton = document.getElementById('toggle-camera');
+const toggleMicButton = document.getElementById('toggle-mic');
+const endButton = document.getElementById('end-button');
+const videoContainer = document.getElementById('video-container');
 
-let isAudioMuted = false;
-let isVideoPaused = false;
-let isScreenSharing = false;
+let localStream;
+let peerConnections = [];
 
-// Function to toggle audio on/off
-function toggleAudio() {
-  isAudioMuted = !isAudioMuted;
-  localVideo.muted = isAudioMuted;
-}
+startButton.addEventListener('click', startVideoCall);
+toggleCameraButton.addEventListener('click', toggleCamera);
+toggleMicButton.addEventListener('click', toggleMicrophone);
+endButton.addEventListener('click', endVideoCall);
 
-toggleAudioBtn.addEventListener('click', toggleAudio);
+async function startVideoCall() {
+    try {
+        localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+        
+        // Display local video
+        const localVideo = createVideoElement(localStream, 'local');
+        videoContainer.appendChild(localVideo);
 
-// Function to toggle video on/off
-function toggleVideo() {
-  isVideoPaused = !isVideoPaused;
-  localVideo.srcObject.getVideoTracks().forEach(track => {
-    track.enabled = !isVideoPaused;
-  });
-}
+        // Code to establish a signaling server connection and set up peer connections
+        // This involves creating an offer, sending it to the remote peer, receiving answer, etc.
 
-toggleVideoBtn.addEventListener('click', toggleVideo);
-
-// Function to toggle screen sharing on/off
-async function toggleScreenShare() {
-  try {
-    if (isScreenSharing) {
-      // Stop sharing screen
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-      localVideo.srcObject = stream;
-
-      // Stop sharing the screen track
-      const screenTrack = localVideo.srcObject.getVideoTracks().find(track => track.label === 'screen');
-      screenTrack.stop();
-      isScreenSharing = false;
-      toggleScreenShareBtn.textContent = 'Share Screen';
-    } else {
-      // Share screen
-      const screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
-      localVideo.srcObject = screenStream;
-
-      // Replace the video track with the screen track to the localPeerConnection
-      const videoTrack = localVideo.srcObject.getVideoTracks()[0];
-      localPeerConnection.getSenders().find(sender => sender.track.kind === 'video').replaceTrack(videoTrack);
-
-      isScreenSharing = true;
-      toggleScreenShareBtn.textContent = 'Stop Sharing';
+    } catch (error) {
+        console.error('Error accessing media devices:', error);
     }
-  } catch (err) {
-    console.error("Error accessing screen sharing:", err);
-  }
 }
 
-toggleScreenShareBtn.addEventListener('click', toggleScreenShare);
-
-// Function to toggle full screen for video element
-function toggleFullScreen() {
-  if (localVideo.requestFullscreen) {
-    localVideo.requestFullscreen();
-  } else if (localVideo.mozRequestFullScreen) { /* Firefox */
-    localVideo.mozRequestFullScreen();
-  } else if (localVideo.webkitRequestFullscreen) { /* Chrome, Safari and Opera */
-    localVideo.webkitRequestFullscreen();
-  } else if (localVideo.msRequestFullscreen) { /* IE/Edge */
-    localVideo.msRequestFullscreen();
-  }
+function createVideoElement(stream, id) {
+    const videoElement = document.createElement('video');
+    videoElement.id = id + '-video';
+    videoElement.srcObject = stream;
+    videoElement.autoplay = true;
+    videoElement.muted = true; // Mute local video
+    return videoElement;
 }
 
-toggleFullScreenBtn.addEventListener('click', toggleFullScreen);
+function toggleCamera() {
+    if (localStream) {
+        const videoTrack = localStream.getVideoTracks()[0];
+        videoTrack.enabled = !videoTrack.enabled;
+    }
+}
 
-// Call the setupLocalStream function to start accessing the user's media devices
-setupLocalStream();
+function toggleMicrophone() {
+    if (localStream) {
+        const audioTrack = localStream.getAudioTracks()[0];
+        audioTrack.enabled = !audioTrack.enabled;
+    }
+}
 
-// Call the createPeerConnection function to create the peer connection and start the call
-createPeerConnection();
+function endVideoCall() {
+    // Close all peer connections
+    peerConnections.forEach(connection => {
+        connection.close();
+    });
+
+    if (localStream) {
+        localStream.getTracks().forEach(track => track.stop());
+    }
+
+    // Remove video elements
+    document.querySelectorAll('video').forEach(videoElement => {
+        videoElement.remove();
+    });
+}
