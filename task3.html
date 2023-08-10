@@ -1,34 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Attractive Video Conferencing</title>
-  <link rel="stylesheet" href="task3.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="task3.css">
+    <title>Dynamic Video Conferencing</title>
 </head>
 <body>
-  <header>
-    <h1>Awesome Video Conferencing</h1>
-  </header>
-  <div id="video-container">
-    <div id="localVideoContainer">
-      <video id="localVideo" autoplay muted></video>
-      <p>You</p>
-    </div>
-    <div id="remoteVideoContainer">
-      <video id="remoteVideo" autoplay></video>
-      <p>Participant</p>
-    </div>
-  </div>
-  <div id="controls">
-    <button id="toggleAudioBtn" class="control-btn">Toggle Audio</button>
-    <button id="toggleVideoBtn" class="control-btn">Toggle Video</button>
-    <button id="toggleScreenShareBtn" class="control-btn">Share Screen</button>
-    <button id="toggleFullScreenBtn" class="control-btn">Toggle Full Screen</button>
-  </div>
-  <div id="chat-container">
-    <!-- Implement chat feature here -->
-  </div>
-  <script src="task3.js"></script>
+    <header>
+        <h1>Dynamic Video Conferencing</h1>
+    </header>
+    <main>
+        <div id="video-container"></div>
+        <div id="controls">
+            <button id="start-button">Start Video Call</button>
+            <button id="toggle-camera">Toggle Camera</button>
+            <button id="toggle-mic">Toggle Microphone</button>
+            <button id="end-button">End Video Call</button>
+        </div>
+    </main>
+    <script src="task3.js"></script>
 </body>
 </html>
